@@ -70,8 +70,8 @@ def set_nullable_var(var, name):
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
-	creds = k.aws.config.get_region_keys(options)
+	kstdlib.logging.config.configure_logging(options)
+	creds = kaws.config.get_region_keys(options)
 	export_env_vars(creds)
 
 def optionParser():
@@ -79,9 +79,9 @@ def optionParser():
 	usage += "Prints out variables needed to get a properly set up AWS env."
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser, rw=True)
-	k.aws.config.get_region_option(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser, rw=True)
+	kaws.config.get_region_option(parser)
 	return parser
 
 if __name__=='__main__':
