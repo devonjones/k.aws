@@ -18,7 +18,8 @@ class PyTest(Command):
 def parse_requirements(file_name):
 	"""Taken from http://cburgmer.posterous.com/pip-requirementstxt-and-setuppy"""
 	requirements = []
-	for line in open(os.path.join(os.path.dirname(__file__), "config", file_name), "r"):
+	for line in open(
+			os.path.join(os.path.dirname(__file__), "config", file_name), "r"):
 		line = line.strip()
 		# comments and blank lines
 		if re.match(r"(^#)|(^$)", line):
@@ -31,7 +32,7 @@ def parse_requirements(file_name):
 				version = parts.pop()
 				if version.find('v') > -1:
 					version = version.replace('v', '')
-				line = "%s==%s" %(package, version)
+				line = "%s==%s" % (package, version)
 			else:
 				line = package
 		requirements.append(line)
@@ -39,7 +40,8 @@ def parse_requirements(file_name):
 
 def parse_dependency_links(file_name):
 	dependency_links = []
-	for line in open(os.path.join(os.path.dirname(__file__), "config", file_name), "r"):
+	for line in open(
+			os.path.join(os.path.dirname(__file__), "config", file_name), "r"):
 		line = line.strip()
 		# comments and blank lines
 		if re.match(r"(^#)|(^$)", line):
@@ -50,16 +52,16 @@ def parse_dependency_links(file_name):
 			if len(url_parts) == 3:
 				tag = url_parts.pop()
 				version = tag.replace('v', '')
-				url = "%s/archive/%s.tar.gz#%s-%s" %(
+				url = "%s/archive/%s.tar.gz#%s-%s" % (
 					'@'.join(url_parts)[4:], tag, '#'.join(parts), version)
 			else:
-				url = "%s#%s" %('@'.join(url_parts)[4:], '#'.join(parts))
+				url = "%s#%s" % ('@'.join(url_parts)[4:], '#'.join(parts))
 			dependency_links.append(url)
 	return dependency_links
 
 setup(
 	name = "kaws",
-	version = "1.0.1",
+	version = "1.0.2",
 	url = "https://wiki.knewton.net/index.php/Tech",
 	author = "Devon Jones",
 	author_email = "devon.jones@gmail.com",
@@ -82,7 +84,6 @@ setup(
 		"bin/find-cfn-resource",
 		"bin/gzip-respooler",
 		"bin/iam-list-users",
-		"bin/kaws-tool-link.sh",
 		"bin/rds-list",
 		"bin/s3-backup-schedule",
 		"bin/s3-clean",
