@@ -59,7 +59,7 @@ def parse_dependency_links(file_name):
 
 setup(
 	name = "kaws",
-	version = "1.0.0",
+	version = "1.0.1",
 	url = "https://wiki.knewton.net/index.php/Tech",
 	author = "Devon Jones",
 	author_email = "devon.jones@gmail.com",
