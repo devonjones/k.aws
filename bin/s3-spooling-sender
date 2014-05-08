@@ -6,9 +6,9 @@ import logging
 import cStringIO
 import gzip
 import boto
-import k.aws.config
-import k.aws.s3
-import k.stdlib.logging.config
+import kaws.config
+import kaws.s3
+import kstdlib.logging.config
 from collections import namedtuple
 from Queue import Empty
 from multiprocessing import Process, Queue
@@ -146,7 +146,7 @@ def upload_part(creds, ordinary, bucket_name, bucket_key,
 	compress it and upload the part.  Close the s3 connection.
 	Intended to be run as a child process.
 	"""
-	conn = k.aws.s3.connect(
+	conn = kaws.s3.connect(
 		creds, bucket_name=bucket_name, ordinary=ordinary)
 	bucket = conn.get_bucket(bucket_name)
 	upload = get_upload(bucket, bucket_key)
@@ -242,7 +242,7 @@ def watch_directory(creds, upload_info, spool_dir, options):
 	Watches a directory.  If there are files in that dir, they will get picked
 	up, read and uploaded to s3 as a part of a multipart upload.
 	"""
-	conn = k.aws.s3.connect(
+	conn = kaws.s3.connect(
 		creds, bucket_name=upload_info.bucket_name, ordinary=options.ordinary)
 	bucket = conn.get_bucket(upload_info.bucket_name)
 	check_open_uploads(bucket, upload_info)
@@ -260,13 +260,13 @@ UploadInfo = namedtuple('UploadInfo', ['bucket_name', 'prefix', 'machine_id'])
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 	if len(args) != 3:
 		parser.print_help()
 		sys.exit(1)
 	try:
-		creds = k.aws.config.get_keys(options)
-		bucket_name = k.aws.s3.get_bucket_name(options)
+		creds = kaws.config.get_keys(options)
+		bucket_name = kaws.s3.get_bucket_name(options)
 		spool_dir = args[2]
 		upload_info = UploadInfo(bucket_name, args[0], args[1])
 		watch_directory(creds, upload_info, spool_dir, options)
@@ -282,9 +282,9 @@ def optionParser():
 	usage += " Close out the mutli-part upload and start another."
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser, rw=True)
-	k.aws.s3.get_s3_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser, rw=True)
+	kaws.s3.get_s3_options(parser)
 	parser.add_option(
 		"--sleep", dest="sleep",
 		help="Time to sleep (in seconds) between disk checks (Default: 0.1)",

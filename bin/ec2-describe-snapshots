@@ -28,9 +28,9 @@ Examples:
 import boto
 import csv
 import json
-import k.aws.config
-import k.aws.ec2
-import k.stdlib.logging.config
+import kaws.config
+import kaws.ec2
+import kstdlib.logging.config
 import sys
 from collections import OrderedDict
 from optparse import OptionParser
@@ -106,9 +106,9 @@ def main():
 	if opts.all and opts.restorable_by:
 		parser.error("You cannot specify both all and user.")
 
-	k.stdlib.logging.config.configure_logging(opts)
-	creds = k.aws.config.get_keys(opts)
-	conn = k.aws.ec2.connect(creds)
+	kstdlib.logging.config.configure_logging(opts)
+	creds = kaws.config.get_keys(opts)
+	conn = kaws.ec2.connect(creds)
 	describe_snapshots(conn, opts, args)
 
 def add_filter(option, opt_str, value, parser, *args, **kwargs):
@@ -148,10 +148,10 @@ def option_parser():
 	version = "%prog (" + __version__ + ")"
 	description = "Describe EC2 snapshots."
 	parser = OptionParser(usage=usage, version=version, description=description)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser)
-	k.aws.config.get_region_option(parser)
-	k.aws.config.get_format_option(parser, ['json', 'tsv'], 'tsv')
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser)
+	kaws.config.get_region_option(parser)
+	kaws.config.get_format_option(parser, ['json', 'tsv'], 'tsv')
 
 	parser.add_option("-a", "--all", dest="all", action="store_true",
 			help=("Describe all snapshots, public, private or shared,"

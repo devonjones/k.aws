@@ -3,9 +3,9 @@ import boto
 import logging
 import os
 import sys
-import k.aws.config
-import k.aws.sqs
-import k.stdlib.logging.config
+import kaws.config
+import kaws.sqs
+import kstdlib.logging.config
 from boto.sqs.connection import SQSConnection
 from boto.sqs.message import Message
 from optparse import OptionParser
@@ -20,7 +20,7 @@ def send_message(queue, doc):
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 
 	doc = "".join(sys.stdin.readlines()).strip()
 	if doc == "":
@@ -28,9 +28,9 @@ def main():
 		sys.exit(1)
 
 	try:
-		creds = k.aws.config.get_keys(options)
-		conn = k.aws.sqs.connect(creds)
-		queue = k.aws.sqs.get_queue(conn, options)
+		creds = kaws.config.get_keys(options)
+		conn = kaws.sqs.connect(creds)
+		queue = kaws.sqs.get_queue(conn, options)
 		send_message(queue, doc)
 	except boto.exception.SQSError, e:
 		sys.stderr.write(str(e) + "\n")
@@ -41,9 +41,9 @@ def optionParser():
 	usage += "Posts the text of stdin to the given sqs queue"
 
 	parser = OptionParser(usage=usage)
-	k.aws.config.get_aws_options(parser, rw=True)
-	k.aws.sqs.get_sqs_options(parser)
-	k.stdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser, rw=True)
+	kaws.sqs.get_sqs_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
 	return parser
 
 if __name__=='__main__':

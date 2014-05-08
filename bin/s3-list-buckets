@@ -3,9 +3,9 @@ import os
 import logging
 import sys
 import boto
-import k.aws.config
-import k.aws.s3
-import k.stdlib.logging.config
+import kaws.config
+import kaws.s3
+import kstdlib.logging.config
 from boto import exception
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
@@ -19,11 +19,11 @@ def list_buckets(conn):
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 
 	try:
-		creds = k.aws.config.get_keys(options)
-		conn = k.aws.s3.connect(creds, ordinary=options.ordinary)
+		creds = kaws.config.get_keys(options)
+		conn = kaws.s3.connect(creds, ordinary=options.ordinary)
 		list_buckets(conn)
 	except boto.exception.BotoServerError, e:
 		sys.stderr.write(e.message)
@@ -34,9 +34,9 @@ def optionParser():
 	usage += "Lists the account's s3 buckets"
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser)
-	k.aws.s3.get_s3_region_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser)
+	kaws.s3.get_s3_region_options(parser)
 	return parser
 
 if __name__=='__main__':

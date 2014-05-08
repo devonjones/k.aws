@@ -3,9 +3,9 @@ import os
 import logging
 import sys
 import boto
-import k.aws.config
-import k.aws.s3
-import k.stdlib.logging.config
+import kaws.config
+import kaws.s3
+import kstdlib.logging.config
 from boto import exception
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
@@ -13,10 +13,10 @@ from optparse import OptionParser
 
 def dry_run(creds, options):
 	sys.stderr.write("DRY RUN\n")
-	bucket_name = k.aws.s3.get_bucket_name(options)
-	conn = k.aws.s3.connect(
+	bucket_name = kaws.s3.get_bucket_name(options)
+	conn = kaws.s3.connect(
 		creds, bucket_name=bucket_name, ordinary=options.ordinary)
-	bucket = k.aws.s3.get_bucket(conn, options)
+	bucket = kaws.s3.get_bucket(conn, options)
 	keys = bucket.list()
 	for key in keys:
 		print key.name
@@ -28,22 +28,22 @@ def destroy_bucket(creds, options):
 		sys.stderr.write('Threads must be greater then 1\n')
 		sys.exit(1)
 	timeout = int(options.timeout)
-	bucket_name = k.aws.s3.get_bucket_name(options)
-	k.aws.s3.parallel_delete_bucket(creds, bucket_name,
+	bucket_name = kaws.s3.get_bucket_name(options)
+	kaws.s3.parallel_delete_bucket(creds, bucket_name,
 		ordinary=options.ordinary, threads=threads,
 		timeout=timeout, verbose=options.verbose)
-	conn = k.aws.s3.connect(
+	conn = kaws.s3.connect(
 		creds, bucket_name=bucket_name, ordinary=options.ordinary)
-	k.aws.s3.delete_bucket(conn, bucket_name)
+	kaws.s3.delete_bucket(conn, bucket_name)
 	print "bucket:%s" % bucket_name
 
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 
 	try:
-		creds = k.aws.config.get_keys(options)
+		creds = kaws.config.get_keys(options)
 		if not options.force:
 			dry_run(creds, options)
 		else:
@@ -58,10 +58,10 @@ def optionParser():
 	usage += "Does a dry run unless you use -f"
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser, rw=True)
-	k.aws.config.get_verbose_option(parser)
-	k.aws.s3.get_s3_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser, rw=True)
+	kaws.config.get_verbose_option(parser)
+	kaws.s3.get_s3_options(parser)
 	parser.add_option(
 		"-t", "--threads", default="10", dest="threads",
 		help="Threads (default: 10)")

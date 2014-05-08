@@ -3,16 +3,16 @@ import os
 import logging
 import sys
 import boto
-import k.aws.config
-import k.aws.s3
-import k.stdlib.logging.config
+import kaws.config
+import kaws.s3
+import kstdlib.logging.config
 from boto import exception
 from boto.s3.key import Key
 from boto.s3.bucket import Bucket
 from optparse import OptionParser
 
 def clean(conn, options, args):
-	bucket = k.aws.s3.get_bucket(conn, options)
+	bucket = kaws.s3.get_bucket(conn, options)
 	keys = bucket.list(prefix=args[0])
 	for key in keys:
 		if key.size == 0:
@@ -23,12 +23,12 @@ def clean(conn, options, args):
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 
 	try:
-		creds = k.aws.config.get_keys(options)
-		bucket_name = k.aws.s3.get_bucket_name(options)
-		conn = k.aws.s3.connect(
+		creds = kaws.config.get_keys(options)
+		bucket_name = kaws.s3.get_bucket_name(options)
+		conn = kaws.s3.connect(
 			creds, bucket_name=bucket_name, ordinary=options.ordinary)
 		clean(conn, options, args)
 	except boto.exception.BotoServerError, e:
@@ -40,10 +40,10 @@ def optionParser():
 	usage += "Cleans out empty keys with the prefix"
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser)
-	k.aws.config.get_verbose_option(parser)
-	k.aws.s3.get_s3_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser)
+	kaws.config.get_verbose_option(parser)
+	kaws.s3.get_s3_options(parser)
 
 	return parser
 

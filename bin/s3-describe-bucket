@@ -2,8 +2,8 @@
 
 """s3-describe-bucket -e <aws environment> -b <bucket> [-p <prefix>] [optional params]
 
-The -e and -b flags are required and are the standard k.aws.s3
-options.  Use "pydoc k.aws.s3" to find out more about these options
+The -e and -b flags are required and are the standard kaws.s3
+options.  Use "pydoc kaws.s3" to find out more about these options
 (no, seriously.  This should be fixed so that these options can be
 gotten via pydoc).
 
@@ -69,7 +69,7 @@ import os
 import logging
 import sys
 import difflib
-import k.stdlib.logging.config
+import kstdlib.logging.config
 from collections import namedtuple
 import functools
 import simplejson as json
@@ -78,9 +78,9 @@ from boto import exception
 from boto.s3.key import Key
 from boto.s3.bucket import Bucket
 from optparse import OptionParser
-import k.aws.config
-import k.aws.s3
-import k.aws.util
+import kaws.config
+import kaws.s3
+import kaws.util
 from blessings import Terminal
 
 
@@ -109,7 +109,7 @@ def _get_bucket_list_with_retry(creds, bucket_name, is_ordinary, prefix=None, re
 	:type retry_count: Integer
 	:param retry_count: Number of times to retry any failed call
 	"""
-	conn = k.aws.s3.connect(
+	conn = kaws.s3.connect(
 		creds, bucket_name=bucket_name, ordinary=is_ordinary)
 	bucket = conn.get_bucket(bucket_name)
 
@@ -134,11 +134,11 @@ def _get_bucket_list_with_retry(creds, bucket_name, is_ordinary, prefix=None, re
 				print "Sleeping"
 				time.sleep(retry_seq[count])
 				continue
-	return k.aws.util.yield_aws_data(get_all_keys_with_retry, 'next_token', marker_lookup, data_lookup)
+	return kaws.util.yield_aws_data(get_all_keys_with_retry, 'next_token', marker_lookup, data_lookup)
 
 
 def _get_bucket_list(creds, bucket_name, is_ordinary, prefix=None):
-	conn = k.aws.s3.connect(
+	conn = kaws.s3.connect(
 		creds, bucket_name=bucket_name, ordinary=is_ordinary)
 	bucket = conn.get_bucket(bucket_name)
 	if prefix:
@@ -151,7 +151,7 @@ def yield_and_print_info(creds, src_bucket_name, src_prefix=None, src_ordinary=F
 	"""
 	Given a bucket, yield each key in the bucket as a namedtuple of <key name>: <size in KB>
 
-	creds: a set of creds that can be used by k.aws.s3.connect. These creds must be able to connect to both buckets.
+	creds: a set of creds that can be used by kaws.s3.connect. These creds must be able to connect to both buckets.
 	src_bucket_name: string, name of the bucket to be considered the "source"
 	src_prefix: string or None, whether a prefix should be used to filter keys to be compared in the source
 	src_ordinary: boolean, whether the "ordinary" format will be used (only valid in us-east-1)
@@ -216,8 +216,8 @@ def option_parser():
 		"bucket2/<prefix> in the same or another s3 bucket."])
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser)
 	parser.add_option(
 		"-o", dest="ordinary", default=False, action="store_true",
 		help="Use Ordinary Calling Format (source bucket).")
@@ -278,12 +278,12 @@ def save_output(s3_info, destination_file, format='json'):
 def main():
 	parser = option_parser()
 	(opts, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 	if opts.write_to_file is None:
 		opts.write_to_file = opts.bucket + ".json"
 
 	try:
-		creds = k.aws.config.get_keys(opts)
+		creds = kaws.config.get_keys(opts)
 		generated_key_list = yield_and_print_info(creds, opts.bucket, opts.prefix, opts.ordinary)
 		# save_output(build_output(generated_key_list, opts), opts.write_to_file)
 		write_output(generated_key_list, opts)

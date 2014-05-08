@@ -2,9 +2,9 @@
 import os
 import logging
 import sys
-import k.stdlib.logging.config
+import kstdlib.logging.config
 from optparse import OptionParser
-from k.aws.tools import get_tools
+from kaws.tools import get_tools
 
 def install_tools():
 	tools = get_tools()
@@ -17,7 +17,7 @@ def install_tools():
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 	install_tools()
 
 def optionParser():
@@ -26,7 +26,7 @@ def optionParser():
 	usage += "\tec2-api tools\n"
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
 	return parser
 
 if __name__=='__main__':

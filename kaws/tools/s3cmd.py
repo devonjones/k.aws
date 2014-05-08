@@ -5,8 +5,8 @@ http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
 
 import sh
 import os.path
-from k.aws.tools.base import ToolBase
-from k.aws.tools.base import ToolBase, TOOL_HOME, CONFIG_HOME
+from kaws.tools.base import ToolBase
+from kaws.tools.base import ToolBase, TOOL_HOME, CONFIG_HOME
 
 S3CMD_HOME = TOOL_HOME + "/s3cmd"
 

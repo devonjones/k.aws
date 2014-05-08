@@ -3,17 +3,17 @@ import time
 import boto
 import boto.exception
 import boto.ec2.autoscale
-import k.aws.util
+import kaws.util
 import functools
-from k.aws.config import AwsCreds, connection_hash
-from k.aws.config import RegionAwsCreds, region_connection_hash
+from kaws.config import AwsCreds, connection_hash
+from kaws.config import RegionAwsCreds, region_connection_hash
 
 def connect(creds):
 	"""
 	Connect to autoscale, with user-provided options.
 
 	:param region_creds: The region name and AWS credentials.
-	:type region_creds: k.aws.config.AwsCreds or k.aws.config.RegionAwsCreds
+	:type region_creds: kaws.config.AwsCreds or kaws.config.RegionAwsCreds
 
 	:rtype: boto.ec2.autoscale.AutoScaleConnection
 	"""
@@ -46,11 +46,11 @@ def get_all_groups(conn, backoff_count=10):
 			except boto.exception.BotoServerError as bse:
 				time.sleep(backoff_seq[count])
 				continue
-	return k.aws.util.yield_aws_data(
+	return kaws.util.yield_aws_data(
 		get_with_backoff,
 		'next_token',
-		k.aws.util.next_token_marker_lookup,
-		k.aws.util.default_data_lookup)
+		kaws.util.next_token_marker_lookup,
+		kaws.util.default_data_lookup)
 
 def get_all_launch_configs(conn, backoff_count=10):
 	"""Iterator that yields all launch configs, to simplify getting all of them.
@@ -70,11 +70,11 @@ def get_all_launch_configs(conn, backoff_count=10):
 			except boto.exception.BotoServerError as bse:
 				time.sleep(backoff_seq[count])
 				continue
-	return k.aws.util.yield_aws_data(
+	return kaws.util.yield_aws_data(
 		get_with_backoff,
 		'next_token',
-		k.aws.util.next_token_marker_lookup,
-		k.aws.util.default_data_lookup)
+		kaws.util.next_token_marker_lookup,
+		kaws.util.default_data_lookup)
 
 # Local Variables:
 # tab-width: 4

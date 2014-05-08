@@ -1,15 +1,15 @@
 import os
 import boto
 import boto.sqs
-from k.aws.config import AwsCreds, connection_hash
-from k.aws.config import RegionAwsCreds, region_connection_hash
+from kaws.config import AwsCreds, connection_hash
+from kaws.config import RegionAwsCreds, region_connection_hash
 
 def connect(creds):
 	"""
 	Connect to simple db, with user-provided options.
 
 	:param region_creds: The region name and AWS credentials.
-	:type region_creds: k.aws.config.AwsCreds or k.aws.config.RegionAwsCreds
+	:type region_creds: kaws.config.AwsCreds or kaws.config.RegionAwsCreds
 
 	:rtype: boto.sqs.connection.SDBConnection.
 	"""

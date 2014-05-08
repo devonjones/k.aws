@@ -3,9 +3,9 @@ import boto
 import logging
 import os
 import sys
-import k.aws.config
-import k.aws.sqs
-import k.stdlib.logging.config
+import kaws.config
+import kaws.sqs
+import kstdlib.logging.config
 from optparse import OptionParser
 from popen2 import Popen3
 from boto.sqs.connection import SQSConnection
@@ -47,15 +47,15 @@ def get_queue(conn, options):
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 
 	if len(args) != 1:
 		sys.stderr.write("Requires exactly one argument in the form of the command string to execute with the message as stdin\n")
 		sys.exit(1)
 
 	try:
-		creds = k.aws.config.get_keys(options)
-		conn = k.aws.sqs.connect(creds)
+		creds = kaws.config.get_keys(options)
+		conn = kaws.sqs.connect(creds)
 		queue = get_queue(conn, options)
 		if not queue:
 			sys.stderr.write(options.queue + " queue does not exist\n")
@@ -70,9 +70,9 @@ def optionParser():
 	usage += "Handles the next message(s) in the given sqs queue and passes it to the stdin of the command passed in as arg"
 
 	parser = OptionParser(usage=usage)
-	k.aws.config.get_aws_options(parser, rw=True)
-	k.aws.sqs.get_sqs_options(parser)
-	k.stdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser, rw=True)
+	kaws.sqs.get_sqs_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
 	parser.add_option("-o", "--one", action="store_true", dest="one", help="Process one message instead of all messages until a failure")
 	parser.set_defaults(one = False)
 

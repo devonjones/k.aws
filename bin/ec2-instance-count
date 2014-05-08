@@ -2,9 +2,9 @@
 import boto
 import logging
 import os
-import k.aws.config
-import k.aws.ec2
-import k.stdlib.logging.config
+import kaws.config
+import kaws.ec2
+import kstdlib.logging.config
 from optparse import OptionParser
 
 def count_instances(conn):
@@ -23,9 +23,9 @@ def count_instances(conn):
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
-	creds = k.aws.config.get_keys(options)
-	conn = k.aws.ec2.connect(creds)
+	kstdlib.logging.config.configure_logging(options)
+	creds = kaws.config.get_keys(options)
+	conn = kaws.ec2.connect(creds)
 	count_instances(conn)
 
 def optionParser():
@@ -33,8 +33,8 @@ def optionParser():
 	usage += "Prints a count of aws instances for an account"
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser)
 	return parser
 
 if __name__=='__main__':

@@ -7,7 +7,7 @@ import datetime
 import logging
 import cStringIO
 import gzip
-import k.stdlib.logging.config
+import kstdlib.logging.config
 from optparse import OptionParser
 
 def process_file(spool_file, gz_spool, min_size):
@@ -131,7 +131,7 @@ def create_and_validate_directory(candidate):
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 	if len(args) != 2:
 		parser.print_help()
 		sys.exit(1)
@@ -151,7 +151,7 @@ def optionParser():
 	usage += "  with a minimal size of 5 meg."
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
 	parser.add_option(
 		"--sleep", dest="sleep",
 		help="Time to sleep (in seconds) between disk checks (Default: 0.1)",

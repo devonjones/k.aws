@@ -23,16 +23,47 @@ def parse_requirements(file_name):
 		# comments and blank lines
 		if re.match(r"(^#)|(^$)", line):
 			continue
+		if line.startswith("git+"):
+			parts = line.split('#')
+			package = parts.pop().split('=').pop()
+			parts = '#'.join(parts).split('@')
+			if len(parts) == 3:
+				version = parts.pop()
+				if version.find('v') > -1:
+					version = version.replace('v', '')
+				line = "%s==%s" %(package, version)
+			else:
+				line = package
 		requirements.append(line)
 	return requirements
 
+def parse_dependency_links(file_name):
+	dependency_links = []
+	for line in open(os.path.join(os.path.dirname(__file__), "config", file_name), "r"):
+		line = line.strip()
+		# comments and blank lines
+		if re.match(r"(^#)|(^$)", line):
+			continue
+		if line.startswith("git+"):
+			parts = line.split('#')
+			url_parts = parts.pop(0).split('@')
+			if len(url_parts) == 3:
+				tag = url_parts.pop()
+				version = tag.replace('v', '')
+				url = "%s/archive/%s.tar.gz#%s-%s" %(
+					'@'.join(url_parts)[4:], tag, '#'.join(parts), version)
+			else:
+				url = "%s#%s" %('@'.join(url_parts)[4:], '#'.join(parts))
+			dependency_links.append(url)
+	return dependency_links
+
 setup(
-	name = "k.aws",
-	version = "0.11",
+	name = "kaws",
+	version = "1.0.0",
 	url = "https://wiki.knewton.net/index.php/Tech",
 	author = "Devon Jones",
-	author_email = "devon@knewton.com",
-	license = "Proprietary",
+	author_email = "devon.jones@gmail.com",
+	license = "Apache 2.0",
 	scripts = [
 		"bin/asg-change-key",
 		"bin/asg-from-instance",
@@ -51,7 +82,7 @@ setup(
 		"bin/find-cfn-resource",
 		"bin/gzip-respooler",
 		"bin/iam-list-users",
-		"bin/k.aws-tool-link.sh",
+		"bin/kaws-tool-link.sh",
 		"bin/rds-list",
 		"bin/s3-backup-schedule",
 		"bin/s3-clean",
@@ -92,6 +123,7 @@ setup(
 	package_data = {"config": ["requirements.txt"]},
 	install_requires = parse_requirements("requirements.txt"),
 	tests_require = parse_requirements("requirements.txt"),
+	dependency_links=parse_dependency_links("requirements.txt"),
 	description = "Knewton libraries for dealing with Amazon Web Services.",
 	long_description = "\n" + open("README.md").read(),
 )

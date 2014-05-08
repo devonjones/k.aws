@@ -1,11 +1,11 @@
-# Utilities that are useful in other k.aws modules
+# Utilities that are useful in other kaws modules
 
 import yaml
 import json
 import re
 import urllib2
 import warnings
-from k.aws.config import K_AWS_PATH
+from kaws.config import K_AWS_PATH
 
 def default_data_lookup(response):
 	return response

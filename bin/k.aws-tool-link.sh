@@ -36,7 +36,7 @@ scripts=( \
 	emr-terminate \
 	find-cfn-resource \
 	iam-list-users \
-	k.aws-tool-link.sh \
+	kaws-tool-link.sh \
 	raw-data-backup \
 	s3-clean \
 	s3-compare-listings \

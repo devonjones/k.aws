@@ -1,7 +1,7 @@
-"""The k.aws.config module provides a couple of distinct convenience
+"""The kaws.config module provides a couple of distinct convenience
 functions.  The first is that for tools to be run on the command line,
 it provides a standardized set of options which can be added to other
-option parsing, via the k.aws.config.get_aws_options() function.
+option parsing, via the kaws.config.get_aws_options() function.
 
 This adds the following flags to an OptionParser object, and the
 corresponding attributes to the options object that is returned when
@@ -19,7 +19,7 @@ obj.parse_args() is invoked.
 
 After the above options have been parsed, the OptionParser object
 should be passed to the second distinct part, which gets
-authentication credentials, the k.aws.config.get_keys() call.
+authentication credentials, the kaws.config.get_keys() call.
 
 The get_keys() call will attempt to get credentials for use from the
 following sources:
@@ -40,13 +40,13 @@ If obj.forcefile isn't set to True:
 
  - get_keys() will first attempt to load credentials from files in the
    a variety of locations: ~/.aws/*-conf, ~/aws/*.conf,
-   /etc/knewton/configurations/aws/*.yml, ~/.k.aws/*.yml
+   /etc/knewton/configurations/aws/*.yml, ~/.kaws/*.yml
 
 If obj.forcefile is set to True:
 
  - get_keys() will try to load credentials from files in the locations
    a variety of locations: ~/.aws/*-conf, ~/aws/*.conf,
-   /etc/knewton/configurations/aws/*.yml, ~/.k.aws/*.yml
+   /etc/knewton/configurations/aws/*.yml, ~/.kaws/*.yml
 
 In both cases, the collections.namedtuple 'AwsCreds' will be returned,
 which consists of the following fields:
@@ -63,14 +63,14 @@ Example:
     usage = "usage: %prog [options] [key]\\n\\n"
     usage += "Gets the given key from an s3 bucket"
     parser = OptionParser(usage=usage)
-    k.aws.config.get_aws_options(parser)
-    k.aws.s3.get_s3_options(parser)
+    kaws.config.get_aws_options(parser)
+    kaws.s3.get_s3_options(parser)
     [...]
     opts, _ = parser.parse_args()
     try:
-        creds = k.aws.config.get_keys(opts)
-        conn = k.aws.s3.connect(creds)
-        bucket = k.aws.s3.get_bucket(conn, opts)
+        creds = kaws.config.get_keys(opts)
+        conn = kaws.s3.connect(creds)
+        bucket = kaws.s3.get_bucket(conn, opts)
         get(bucket, opts.prefix, args[0])
     except boto.exception.BotoServerError, e:
         sys.stderr.write(e.message + "\\n")
@@ -95,11 +95,11 @@ import types
 import yaml
 import requests
 from collections import namedtuple
-from k.stdlib.collections import defaultnamedtuple
+from kstdlib.collections import defaultnamedtuple
 
 
 AWS_PATH = '/etc/knewton/configuration/aws'
-K_AWS_PATH = os.path.expanduser('~/.k.aws')
+K_AWS_PATH = os.path.expanduser('~/.kaws')
 DEFAULT_REGION_NAME = 'us-east-1'
 OUTPUT_FORMATS = ['json', 'tsv', 'text']
 
@@ -209,7 +209,7 @@ def get_region_keys(options):
 	:param options: options returned from OptionParser().parse_args()
 	:type options: optparse.Values
 
-	:rtype: k.aws.config.RegionAwsCreds
+	:rtype: kaws.config.RegionAwsCreds
 	"""
 	region_name = options.region
 	if not region_name:
@@ -230,7 +230,7 @@ def _get_creds_from_options(options):
 	return AwsCreds(options.access_key, options.secret_key)
 
 def _get_creds_from_environment_yaml(env):
-	"""Get credentials from the relevant ~/.k.aws/<ENV>.yml or
+	"""Get credentials from the relevant ~/.kaws/<ENV>.yml or
 	/etc/knewton/configuration/aws/<ENV>.yml file.
 	"""
 	if not env:
@@ -485,7 +485,7 @@ def _parse_aws_confs():
 			with open(config_file) as yaml_file:
 				configs[env] = yaml.load(yaml_file)
 
-	# config files under ~/.k.aws should override those under
+	# config files under ~/.kaws should override those under
 	# /etc/knewton/configuration/aws
 	if os.path.exists(K_AWS_PATH):
 		for config_file in glob.glob(os.path.join(K_AWS_PATH, "*.yml")):
@@ -506,7 +506,7 @@ def get_keys_for_environment(env):
 
 def get_aws_options(parser, rw=False):
 	"""Provide options that are needed to authenticate, etc. as a top-level
-	feature of k.aws as opposed to being useful for a specific module.
+	feature of kaws as opposed to being useful for a specific module.
 
 	:type parser: optparse.OptionParser
 	:param parser: This OptionParser object will be used to add options to.
@@ -546,7 +546,7 @@ def get_aws_options(parser, rw=False):
 		action="store_true")
 	parser.add_option(
 		"--file", "--forcefile", dest="forcefile",
-		help="Force use of files in k.config (Default: False)",
+		help="Force use of files in kconfig (Default: False)",
 		default=False,
 		action="store_true")
 	parser.add_option(

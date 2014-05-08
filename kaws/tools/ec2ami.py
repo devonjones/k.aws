@@ -6,8 +6,8 @@ EC2 AMI tools are downloadable from:
 
 import sh
 import os.path
-from k.aws.tools.base import ToolBase
-from k.aws.tools.base import ToolBase, TOOL_HOME, CONFIG_HOME
+from kaws.tools.base import ToolBase
+from kaws.tools.base import ToolBase, TOOL_HOME, CONFIG_HOME
 
 DOWNLOAD = TOOL_HOME + "/ec2-ami-tools.zip"
 AMI_HOME = TOOL_HOME + "/ec2-ami-tools"

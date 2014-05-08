@@ -2,9 +2,9 @@
 import sys
 import logging
 import boto
-import k.aws.config
-import k.aws.ec2
-import k.stdlib.logging.config
+import kaws.config
+import kaws.ec2
+import kstdlib.logging.config
 from optparse import OptionParser
 import pprint
 import json
@@ -20,17 +20,17 @@ def desc_group(conn):
 def main():
 	parser = option_parser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
-	creds = k.aws.config.get_keys(options)
-	conn = k.aws.ec2.connect(creds)
+	kstdlib.logging.config.configure_logging(options)
+	creds = kaws.config.get_keys(options)
+	conn = kaws.ec2.connect(creds)
 	instance = ""
 	if len(args) < 1:
 		print "You need to provide identifying info like an instance, ip address or dns name"
 		sys.exit(2)
 
 	document = {'instances' : dict() }
-	# all_instances = k.aws.ec2.all_instances(conn)
-	all_instances = k.aws.ec2.KInstances(conn)
+	# all_instances = kaws.ec2.all_instances(conn)
+	all_instances = kaws.ec2.KInstances(conn)
 	for identifying_info in args:
 		instance_tags = dict()
 		instance_data = dict()
@@ -51,8 +51,8 @@ def option_parser():
 	version = "%prog (" + __version__ + ")"
 	description = "Lists ec2 tags on an instance (provided the ID, dns name or IP address)."
 	parser = OptionParser(usage=usage, version=version, description=description)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser)
 	return parser
 
 if (__name__ == "__main__"):

@@ -3,17 +3,17 @@ import os
 import logging
 import sys
 import yaml
-import k.aws.config
-import k.stdlib.logging.config
+import kaws.config
+import kstdlib.logging.config
 from optparse import OptionParser
-from k.aws.tools import get_tools
-from k.aws.config import K_AWS_PATH
+from kaws.tools import get_tools
+from kaws.config import K_AWS_PATH
 
 def create_path(tool_paths):
 	sys_path = os.environ['PATH'].split(":")
 	retpath = []
 	for path in sys_path:
-		if path.find(".k.aws/tools/") == -1:
+		if path.find(".kaws/tools/") == -1:
 			retpath.append(path)
 	retpath.extend(tool_paths)
 	return ":".join(retpath)

@@ -11,7 +11,7 @@ import traceback
 import hashlib
 import time
 import boto
-import k.aws.config
+import kaws.config
 from cStringIO import StringIO
 from math import ceil, floor
 from threading import Thread
@@ -20,8 +20,8 @@ from multiprocessing import Pool
 from multiprocessing.synchronize import BoundedSemaphore
 from boto.s3.connection import OrdinaryCallingFormat
 from boto.s3.resumable_download_handler import ResumableDownloadHandler
-from k.aws.config import AwsCreds, connection_hash
-from k.aws.config import RegionAwsCreds, region_connection_hash
+from kaws.config import AwsCreds, connection_hash
+from kaws.config import RegionAwsCreds, region_connection_hash
 
 ManualS3Options = collections.namedtuple('ManualS3Options', ["bucket"])
 
@@ -39,7 +39,7 @@ def is_valid_dns_name(bucket_name):
 
 def connect(creds, bucket_name=None, ordinary=False):
 	"""
-	Connect to s3 using a k.aws.config.AwsCreds named tuple
+	Connect to s3 using a kaws.config.AwsCreds named tuple
 	"""
 	kwargs = {}
 	if ordinary:

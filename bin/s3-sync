@@ -4,9 +4,9 @@ import logging
 import sys
 import boto
 import datetime
-import k.aws.config
-import k.aws.s3
-import k.stdlib.logging.config
+import kaws.config
+import kaws.s3
+import kstdlib.logging.config
 from optparse import OptionParser
 
 def cache_target_keys(targetbucket):
@@ -29,40 +29,40 @@ def sync(sourcebucket, targetbucket, mod=False):
 				if targetcache.has_key(key.name):
 					targetcache[key.name][1].set_contents_from_string(contents)
 				else:
-					k.aws.s3.put_key(targetbucket, key.name, contents)
+					kaws.s3.put_key(targetbucket, key.name, contents)
 			except Exception, e:
 				sys.stderr.write("Error syncing %s: %s\n" % (key.name, e))
 
 
 def get_creds(options):
-	sourceopts = k.aws.config.ManualOptions(
+	sourceopts = kaws.config.ManualOptions(
 		None, None, options.aws_env, False, options.forcefile)
-	sourcecreds = k.aws.config.get_keys(sourceopts)
+	sourcecreds = kaws.config.get_keys(sourceopts)
 	env2 = options.aws_env2
 	if not env2:
 		env2 = options.aws_env2
-	targetopts = k.aws.config.ManualOptions(
+	targetopts = kaws.config.ManualOptions(
 		None, None, env2, True, options.forcefile)
-	targetcreds = k.aws.config.get_keys(targetopts)
+	targetcreds = kaws.config.get_keys(targetopts)
 	return sourcecreds, targetcreds
 
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 
 	try:
 		sourcecreds, targetcreds = get_creds(options)
-		source_bucket_name = k.aws.s3.get_bucket_name(k.aws.s3.ManualS3Options(options.bucket))
-		sourceconn = k.aws.s3.connect(
+		source_bucket_name = kaws.s3.get_bucket_name(kaws.s3.ManualS3Options(options.bucket))
+		sourceconn = kaws.s3.connect(
 			creds, bucket_name=source_bucket_name, ordinary=options.ordinary)
-		target_bucket_name = k.aws.s3.get_bucket_name(k.aws.s3.ManualS3Options(options.bucket2))
-		targetconn = k.aws.s3.connect(
+		target_bucket_name = kaws.s3.get_bucket_name(kaws.s3.ManualS3Options(options.bucket2))
+		targetconn = kaws.s3.connect(
 			creds, bucket_name=target_bucket_name, ordinary=options.ordinary2)
-		sourcebucket = k.aws.s3.get_bucket(
-			sourceconn, k.aws.s3.ManualS3Options(options.bucket))
-		targetbucket = k.aws.s3.get_bucket(
-			targetconn, k.aws.s3.ManualS3Options(options.bucket2))
+		sourcebucket = kaws.s3.get_bucket(
+			sourceconn, kaws.s3.ManualS3Options(options.bucket))
+		targetbucket = kaws.s3.get_bucket(
+			targetconn, kaws.s3.ManualS3Options(options.bucket2))
 		sync(sourcebucket, targetbucket, options.mod)
 	except boto.exception.BotoServerError, e:
 		sys.stderr.write(e.message + "\n")
@@ -75,7 +75,7 @@ def optionParser():
 		"For use with multiple AWS keys"])
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
 	parser.add_option(
 		"-e", "--env", dest="aws_env",
 		help=' '.join(["AWS environment for source bucket",
@@ -97,7 +97,7 @@ def optionParser():
 		action="store_true")
 	parser.add_option(
 		"--file", dest="forcefile",
-		help="Force use of files in k.config (Default: readonly)",
+		help="Force use of files in kconfig (Default: readonly)",
 		default=False,
 		action="store_true")
 	parser.add_option(

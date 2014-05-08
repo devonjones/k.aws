@@ -25,9 +25,9 @@ import os
 import logging
 import sys
 import boto
-import k.aws.config
-import k.aws.s3
-import k.stdlib.logging.config
+import kaws.config
+import kaws.s3
+import kstdlib.logging.config
 from boto import exception
 from boto.s3.key import Key
 from boto.s3.bucket import Bucket
@@ -76,7 +76,7 @@ def get_keys_to_stdout(bucket, prefix):
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 	if options.filename and options.prefix:
 		parser.error(' '.join(["If you specify --prefix, you",
 				"need to specify --directory, not --filename."]))
@@ -85,11 +85,11 @@ def main():
 				"--filename and --directory."]))
 
 	try:
-		creds = k.aws.config.get_keys(options)
-		bucket_name = k.aws.s3.get_bucket_name(options)
-		conn = k.aws.s3.connect(
+		creds = kaws.config.get_keys(options)
+		bucket_name = kaws.s3.get_bucket_name(options)
+		conn = kaws.s3.connect(
 			creds, bucket_name=bucket_name, ordinary=options.ordinary)
-		bucket = k.aws.s3.get_bucket(conn, options)
+		bucket = kaws.s3.get_bucket(conn, options)
 		if options.prefix:
 			get_keys(bucket, options.directory, options.prefix)
 		else:
@@ -106,14 +106,14 @@ def optionParser():
 	usage += "Gets the given key from an s3 bucket.\n"
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser)
-	k.aws.s3.get_s3_options(parser)
-	k.aws.config.get_file_option(parser, " ".join(["Download key, to",
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser)
+	kaws.s3.get_s3_options(parser)
+	kaws.config.get_file_option(parser, " ".join(["Download key, to",
 			"this specific file location."]))
-	k.aws.config.get_directory_option(parser, " ".join(["Download key(s), to",
+	kaws.config.get_directory_option(parser, " ".join(["Download key(s), to",
 			"this directory, using the basename of the key as the filename."]))
-	k.aws.config.get_prefix_option(parser, "Download all keys with this prefix, [KEY] ignored")
+	kaws.config.get_prefix_option(parser, "Download all keys with this prefix, [KEY] ignored")
 
 	return parser
 

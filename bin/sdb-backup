@@ -3,9 +3,9 @@
 ./bin/sdb-backup -e utility -d SomeDomain ./databags
 """
 import json
-import k.aws.config
-import k.aws.sdb
-import k.stdlib.logging.config
+import kaws.config
+import kaws.sdb
+import kstdlib.logging.config
 import logging
 import os
 import os.path
@@ -50,8 +50,8 @@ def option_parser():
 	usage = "usage: %prog [OPTIONS] DIRECTORY\n\n"
 	usage += "Backup AWS SimpleDB"
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser)
 	parser.add_option("-d", "--domain", dest="domains", action="append", default=[],
 			help="Backup these specific domains; if not specified, backup all domains.")
 	return parser
@@ -59,7 +59,7 @@ def option_parser():
 def main():
 	parser = option_parser()
 	(opts, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(opts)
+	kstdlib.logging.config.configure_logging(opts)
 
 	if len(args) != 1:
 		parser.error("One argument required: DIRECTORY")
@@ -72,8 +72,8 @@ def main():
 	if not os.path.isdir(directory):
 		parser.error("{0} is not a directory".format(directory))
 
-	creds = k.aws.config.get_keys(opts)
-	conn = k.aws.sdb.connect(creds)
+	creds = kaws.config.get_keys(opts)
+	conn = kaws.sdb.connect(creds)
 	backup_sdb(conn, opts.domains, directory)
 
 if __name__=='__main__':

@@ -4,13 +4,13 @@ import os
 import logging
 import sys
 import boto
-import k.aws
-import k.aws.config
-import k.aws.iam as iam
+import kaws
+import kaws.config
+import kaws.iam as iam
 import pprint
 
 
-import k.stdlib.logging.config
+import kstdlib.logging.config
 from optparse import OptionParser
 
 def parse_options():
@@ -18,9 +18,9 @@ def parse_options():
 	usage += "Cleans out empty keys with the prefix"
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser)
-	k.aws.iam.get_iam_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser)
+	kaws.iam.get_iam_options(parser)
 	parser.add_option(
 		"-u", "--user", dest="user", default=None,
 		help="A substring to look up in user names")
@@ -35,14 +35,14 @@ def simple_print(arg):
 def main():
 	parser = parse_options()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 	if options.pprint:
 		printer=pprint.pprint
 	else:
 		printer=simple_print
 	try:
-		creds = k.aws.config.get_keys(options)
-		conn = k.aws.iam.connect(creds)
+		creds = kaws.config.get_keys(options)
+		conn = kaws.iam.connect(creds)
 		users = iam.get_all_users(conn)
 		for u in users:
 			if options.user:

@@ -2,15 +2,15 @@
 import sys
 import logging
 import boto
-import k.aws.config
-import k.aws.s3
-import k.stdlib.logging.config
+import kaws.config
+import kaws.s3
+import kstdlib.logging.config
 from optparse import OptionParser
 
 def main():
 	parser = option_parser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
+	kstdlib.logging.config.configure_logging(options)
 
 	## Parsing args into the right vars.
 	if args and len(args) == 2:
@@ -21,12 +21,12 @@ def main():
 		parser.error("Must specify bucket name and local directory.")
 
 	try:
-		creds = k.aws.config.get_keys(options)
-		bucket_name = k.aws.s3.get_bucket_name(options)
-		conn = k.aws.s3.connect(
+		creds = kaws.config.get_keys(options)
+		bucket_name = kaws.s3.get_bucket_name(options)
+		conn = kaws.s3.connect(
 			creds, bucket_name=bucket_name, ordinary=options.ordinary)
-		bucket = k.aws.s3.get_bucket(conn, options)
-		k.aws.s3.sync_local(bucket, localdir, options.prefix, options.debug)
+		bucket = kaws.s3.get_bucket(conn, options)
+		kaws.s3.sync_local(bucket, localdir, options.prefix, options.debug)
 	except boto.exception.ResumableDownloadException, err:
 		sys.stderr.write("ResumableDownloadException: %s\n", err)
 		sys.exit(1)
@@ -44,9 +44,9 @@ def option_parser():
 		"Copies a bucket to a local directory."])
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser, rw=True)
-	k.aws.s3.get_s3_region_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser, rw=True)
+	kaws.s3.get_s3_region_options(parser)
 	parser.add_option(
 		"-p", "--prefix", dest="prefix", type="string", default='',
 		help=("Only sync files with the specified prefix. Use trailing slash "

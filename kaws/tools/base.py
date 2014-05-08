@@ -1,4 +1,4 @@
-from k.aws.config import K_AWS_PATH
+from kaws.config import K_AWS_PATH
 import os
 import glob
 

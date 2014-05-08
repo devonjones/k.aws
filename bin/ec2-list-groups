@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import boto
 import logging
-import k.aws.config
-import k.aws.ec2
-import k.stdlib.logging.config
+import kaws.config
+import kaws.ec2
+import kstdlib.logging.config
 from optparse import OptionParser
 
 __version__ = "$Revision: 0 $"
@@ -16,9 +16,9 @@ def desc_group(conn):
 def main():
 	parser = option_parser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
-	creds = k.aws.config.get_keys(options)
-	conn = k.aws.ec2.connect(creds)
+	kstdlib.logging.config.configure_logging(options)
+	creds = kaws.config.get_keys(options)
+	conn = kaws.ec2.connect(creds)
 	desc_group(conn)
 
 def option_parser():
@@ -26,8 +26,8 @@ def option_parser():
 	version = "%prog (" + __version__ + ")"
 	description = "Lists active EC2 instances."
 	parser = OptionParser(usage=usage, version=version, description=description)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser)
 	return parser
 
 if (__name__ == "__main__"):

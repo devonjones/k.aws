@@ -5,24 +5,24 @@
 #
 #
 # E.g.:
-# 644 pn@PN-mac 05:13 ~/dvcs/lib/python/k.aws $ time find-cfn-resource.py -e staging --forcefile --elb_stacks=QA-RecRec,QA-KPIP-Router,QA-MockOSB --resource_type=AWS::ElasticLoadBalancing::LoadBalancer
+# 644 pn@PN-mac 05:13 ~/dvcs/lib/python/kaws $ time find-cfn-resource.py -e staging --forcefile --elb_stacks=QA-RecRec,QA-KPIP-Router,QA-MockOSB --resource_type=AWS::ElasticLoadBalancing::LoadBalancer
 
 import os
 import logging
 import sys
 import boto
-import k.aws.config
-import k.aws.cfn
-import k.aws.elb
+import kaws.config
+import kaws.cfn
+import kaws.elb
 import json
-import k.stdlib.logging.config
+import kstdlib.logging.config
 from optparse import OptionParser
 
 def get_relevant_stack_map(options):
 	"""Get the relevant stacks, returns a mapping of the
 	stack name to the elb ID for the elb in that stack.
 	"""
-	conn   = k.aws.cfn.connect(options.creds)
+	conn   = kaws.cfn.connect(options.creds)
 	stack_map = dict()
 	# full_stack_names = [ "{0}-{1}".format(options.cfn_env, s)
 	# 	for s in options.elb_stacks ]
@@ -37,7 +37,7 @@ def get_elb_resource_id_list(conn, opts, stack_name):
 		if res.resource_type == opts.resource_type ]
 
 def get_elb_by_id(options, elb_resource_id):
-	conn = k.aws.elb.connect(options.creds)
+	conn = kaws.elb.connect(options.creds)
 	return conn.get_all_load_balancers(load_balancer_names=[elb_resource_id])
 
 def optionParser():
@@ -47,8 +47,8 @@ def optionParser():
 		setattr(parser.values, option.dest, value.split(','))
 
 	parser = OptionParser(usage=usage)
-	k.stdlib.logging.config.get_logging_options(parser)
-	k.aws.config.get_aws_options(parser, rw=True)
+	kstdlib.logging.config.get_logging_options(parser)
+	kaws.config.get_aws_options(parser, rw=True)
 	parser.add_option("--stack_name", dest="stack_name",
 		help="The stack to be checked")
 	parser.add_option("--elb_stacks", dest="elb_stacks", action="callback",
@@ -63,8 +63,8 @@ def optionParser():
 def main():
 	parser = optionParser()
 	(options, args) = parser.parse_args()
-	k.stdlib.logging.config.configure_logging(options)
-	options.creds = k.aws.config.get_keys(options)
+	kstdlib.logging.config.configure_logging(options)
+	options.creds = kaws.config.get_keys(options)
 	stack_map = get_relevant_stack_map(options)
 	print json.dumps(stack_map, indent=2)
 

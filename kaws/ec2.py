@@ -2,17 +2,17 @@ import copy
 import itertools
 import boto
 import boto.ec2
-import k.aws.util
+import kaws.util
 import warnings
-from k.aws.config import AwsCreds, connection_hash
-from k.aws.config import RegionAwsCreds, region_connection_hash
+from kaws.config import AwsCreds, connection_hash
+from kaws.config import RegionAwsCreds, region_connection_hash
 
 def connect(creds):
 	"""
 	Connect to ec2, with user-provided options.
 
 	:param region_creds: The region name and AWS credentials.
-	:type region_creds: k.aws.config.AwsCreds or k.aws.config.RegionAwsCreds
+	:type region_creds: kaws.config.AwsCreds or kaws.config.RegionAwsCreds
 
 	:rtype: boto.ec2.connection.EC2Connection
 	"""
@@ -91,13 +91,13 @@ def check_for_tag(instance, tag, desired_value):
 	is equal to desired_value
 	:type instance: boto.ec2.instance.Instance
 	:param instance: The instance whose tags will be checked.
-	
+
 	:type tag: str
 	:param tag: The name of the tag to be searched for
-	
+
 	:type desired_value: str
 	:param desired_value: The string that indicates that kerberos is enabled.
-	
+
 	Returns: boolean
 """
 
@@ -119,7 +119,7 @@ def get_key_pair_name(creds):
 	"""
 	ec2_conn = connect(creds)
 	account_id = get_account_id(ec2_conn)
-	return k.aws.util.get_key_pair_name(account_id)
+	return kaws.util.get_key_pair_name(account_id)
 
 class Instances(object):
 	"""Gathers data from a particular account, and makes it easier to
@@ -184,8 +184,8 @@ class KInstances(Instances):
 	"""Gathers data from a particular account, and makes it easier to
 	search for desired instance data.
 
-    Uses k.aws-specific lingo since its superclass was written without
-    knowledge of k.aws.
+    Uses kaws-specific lingo since its superclass was written without
+    knowledge of kaws.
 	"""
 	def __init__(self, ec2_conn):
 		self.reservations        = ec2_conn.get_all_instances()
