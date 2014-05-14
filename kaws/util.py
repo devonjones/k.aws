@@ -109,7 +109,7 @@ type_map = {
 #: Conversion from the account id to the default key-pair name
 account_id_to_keypair_map = populate_account_id_to_keypair_map()
 
-def populate_account_id_to_keypair_map()
+def populate_account_id_to_keypair_map():
 	if os.path.exists(K_AWS_PATH + "/keypairs.yml"):
 		with open(K_AWS_PATH + "/keypairs.yml") as keys:
 			return yaml.load(keys)
