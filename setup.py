@@ -1,22 +1,54 @@
 #!/usr/bin/env python
-import glob
+import sys
 import os.path
 import re
 from setuptools import Command, find_packages, setup
+from setuptools.command.install import install
+from setuptools.command.develop import develop
+from setuptools.command.test import test
 
-class PyTest(Command):
-	user_options = []
-	def initialize_options(self):
-		pass
+class PyTestCommand(Command):
 	def finalize_options(self):
-		pass
+		test.finalize_options(self)
+		self.test_args = []
+		self.test_suite = True
+
+	def run_tests(self):
+		#import here, cause outside the eggs aren't loaded
+		import pytest
+		errno = pytest.main(self.test_args)
+		sys.exit(errno)
+
+class PipInstallCommand(install):
+	"""
+	Installs the contents of config/requirements.txt before running the
+	setuptools install.  Specifically handles packages that cannot install via
+	setuptools such as numpy
+	"""
 	def run(self):
-		import sys, subprocess
-		errno = subprocess.call([sys.executable, "runtests.py"])
-		raise SystemExit(errno)
+		import sh
+		for line in sh.pip(
+				"install", "-r", "config/requirements.txt", _iter=True):
+			sys.stdout.write(line.encode('utf-8', 'replace'))
+		install.do_egg_install(self)
+
+class PipDevelopCommand(develop):
+	"""
+	Installs the contents of config/requirements.txt before running the
+	setuptools develop.  Specifically handles packages that cannot install via
+	setuptools such as numpy
+	"""
+	def run(self):
+		import sh
+		for line in sh.pip(
+				"install", "-r", "config/requirements.txt", _iter=True):
+			sys.stdout.write(line.encode('utf-8', 'replace'))
+		develop.run(self)
 
 def parse_requirements(file_name):
-	"""Taken from http://cburgmer.posterous.com/pip-requirementstxt-and-setuppy"""
+	"""
+	Taken from http://cburgmer.posterous.com/pip-requirementstxt-and-setuppy
+	"""
 	requirements = []
 	for line in open(
 			os.path.join(os.path.dirname(__file__), "config", file_name), "r"):
@@ -60,13 +92,13 @@ def parse_dependency_links(file_name):
 	return dependency_links
 
 setup(
-	name = "kaws",
-	version = "1.0.6",
-	url = "https://wiki.knewton.net/index.php/Tech",
-	author = "Devon Jones",
-	author_email = "devon.jones@gmail.com",
-	license = "Apache 2.0",
-	scripts = [
+	name="kaws",
+	version="1.0.7",
+	url="https://wiki.knewton.net/index.php/Tech",
+	author="Devon Jones",
+	author_email="devon.jones@gmail.com",
+	license="Apache 2.0",
+	scripts=[
 		"bin/asg-change-key",
 		"bin/asg-from-instance",
 		"bin/asg-report-unused-configs",
@@ -119,12 +151,17 @@ setup(
 		"bin/asg-change-key",
 		"bin/asg-from-instance",
 	],
-	packages = find_packages(),
-	cmdclass = {"test": PyTest},
-	package_data = {"config": ["requirements.txt"]},
-	install_requires = parse_requirements("requirements.txt"),
-	tests_require = parse_requirements("requirements.txt"),
+	packages=find_packages(),
+	cmdclass={
+		'test': PyTestCommand,
+		'install': PipInstallCommand,
+		'develop': PipDevelopCommand
+	},
+	package_data={"config": ["requirements.txt"]},
+	install_requires=parse_requirements("requirements.txt"),
+	tests_require=parse_requirements("requirements.txt"),
 	dependency_links=parse_dependency_links("requirements.txt"),
-	description = "Knewton libraries for dealing with Amazon Web Services.",
-	long_description = "\n" + open("README.md").read(),
+	setup_requires=["sh==1.09"],
+	description="Knewton libraries for dealing with Amazon Web Services.",
+	long_description="\n" + open("README.md").read(),
 )

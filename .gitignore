@@ -37,5 +37,6 @@ coverage.xml
 target
 dist/
 *.egg-info/
+*.egg/
 build/
 MANIFEST
