@@ -19,32 +19,6 @@ class PyTestCommand(Command):
 		errno = pytest.main(self.test_args)
 		sys.exit(errno)
 
-class PipInstallCommand(install):
-	"""
-	Installs the contents of config/requirements.txt before running the
-	setuptools install.  Specifically handles packages that cannot install via
-	setuptools such as numpy
-	"""
-	def run(self):
-		import sh
-		for line in sh.pip(
-				"install", "-r", "config/requirements.txt", _iter=True):
-			sys.stdout.write(line.encode('utf-8', 'replace'))
-		install.do_egg_install(self)
-
-class PipDevelopCommand(develop):
-	"""
-	Installs the contents of config/requirements.txt before running the
-	setuptools develop.  Specifically handles packages that cannot install via
-	setuptools such as numpy
-	"""
-	def run(self):
-		import sh
-		for line in sh.pip(
-				"install", "-r", "config/requirements.txt", _iter=True):
-			sys.stdout.write(line.encode('utf-8', 'replace'))
-		develop.run(self)
-
 def parse_requirements(file_name):
 	"""
 	Taken from http://cburgmer.posterous.com/pip-requirementstxt-and-setuppy
@@ -93,7 +67,7 @@ def parse_dependency_links(file_name):
 
 setup(
 	name="kaws",
-	version="1.0.7",
+	version="1.0.8",
 	url="https://wiki.knewton.net/index.php/Tech",
 	author="Devon Jones",
 	author_email="devon.jones@gmail.com",
@@ -153,13 +127,11 @@ setup(
 	],
 	packages=find_packages(),
 	cmdclass={
-		'test': PyTestCommand,
-		'install': PipInstallCommand,
-		'develop': PipDevelopCommand
+		'test': PyTestCommand
 	},
 	package_data={"config": ["requirements.txt"]},
 	install_requires=parse_requirements("requirements.txt"),
-	tests_require=parse_requirements("requirements.txt"),
+	tests_require=parse_requirements("test.txt"),
 	dependency_links=parse_dependency_links("requirements.txt"),
 	setup_requires=["sh==1.09"],
 	description="Knewton libraries for dealing with Amazon Web Services.",
