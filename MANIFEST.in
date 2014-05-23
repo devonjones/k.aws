@@ -1,2 +1,2 @@
-include config/requirements.txt
+include config/*.txt
 include README.md
